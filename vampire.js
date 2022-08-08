@@ -58,25 +58,105 @@ class Vampire {
       return this
     }
     
-    if(this.numberOfVampiresFromOriginal <= 2) {
-      if(this.creator === null){
-        return this
-      }
+    if(!this.creator){
+      return this
+    }
+
+    if(!vampire.creator){
+      return vampire
+    }
+
+    if(this.creator === vampire.creator){
       return this.creator
     }
 
-    if(vampire.numberOfVampiresFromOriginal <= 2) {
-      if(vampire.creator === null){
-        return vampire
-      }
-      return vampire.creator
+    if(this.numberOfVampiresFromOriginal === vampire.numberOfVampiresFromOriginal){
+      return this.creator.closestCommonAncestor(vampire);    
     }
-  
-    if (this.numberOfVampiresFromOriginal < vampire.numberOfVampiresFromOriginal) {
+
+    if (this.numberOfVampiresFromOriginal < vampire.numberOfVampiresFromOriginal && vampire.numberOfVampiresFromOriginal - this.numberOfVampiresFromOriginal == 1) {
       return this
-    } 
+    }
+    
+    if (this.numberOfVampiresFromOriginal > vampire.numberOfVampiresFromOriginal && this.numberOfVampiresFromOriginal - vampire.numberOfVampiresFromOriginal  == 1) {
+      return vampire
+    }
+
+    if(this.numberOfVampiresFromOriginal < vampire.numberOfVampiresFromOriginal) {
+      let ancestor = vampire
+      while (this.creator.numberOfVampiresFromOriginal < ancestor.numberOfVampiresFromOriginal) {
+        ancestor = ancestor.creator;
+      }
+     return ancestor.closestCommonAncestor(vampire)
+    }
+
+    if(this.numberOfVampiresFromOriginal > vampire.numberOfVampiresFromOriginal) {
+      let ancestor = this
+      while (vampire.creator.numberOfVampiresFromOriginal < ancestor.numberOfVampiresFromOriginal) {
+        ancestor = ancestor.creator;
+      }
+      return ancestor.closestCommonAncestor(this)
+    }
+
     return vampire;
   }
+
+
+
+
+
+
+  // Returns the vampire object with that name, 
+  //or null if no vampire exists with that name
+  vampireWithName(name) {
+    let vampire = null
+    
+    if (this.name === name){
+       vampire = this; 
+    } 
+
+    if (vampire === null){
+      for(const alvo of this.offspring){
+         alvo.vampireWithName(name); // 
+      }
+      
+    }
+   return vampire
+  }
+  
+
+
+
+
+
+  // Returns the total number of vampires that exist
+  get totalDescendents() {
+    
+    let totalDesc = 0; 
+
+    for (const descend of this.offspring){
+      totalDesc += descend.totalDescendents +1;
+    }
+    return totalDesc;
+  }
+
+  // Returns an array of all the vampires that were converted after 1980
+  get allMillennialVampires() {
+  
+    let allMillennial = []; 
+
+    if (this.yearConverted > 1980) {
+      allMillennial.push(this); // 2
+    }
+
+    for (const yearC of this.offspring) {
+      const x = yearC.allMillennialVampires
+      allMillennial = allMillennial.concat(x);
+    }
+    return allMillennial;
+
+  }
+
 }
 
 module.exports = Vampire;
