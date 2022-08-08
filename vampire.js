@@ -101,11 +101,6 @@ class Vampire {
     return vampire;
   }
 
-
-
-
-
-
   // Returns the vampire object with that name, 
   //or null if no vampire exists with that name
   vampireWithName(name) {
@@ -117,18 +112,15 @@ class Vampire {
 
     if (vampire === null){
       for(const alvo of this.offspring){
-         alvo.vampireWithName(name); // 
-      }
-      
+        const localVampire = alvo.vampireWithName(name)
+        if(localVampire !== null){
+          vampire = localVampire;
+        }; 
+      } 
     }
    return vampire
   }
   
-
-
-
-
-
   // Returns the total number of vampires that exist
   get totalDescendents() {
     
